@@ -1,5 +1,5 @@
 import React from 'react'
-import bgVideo from '../../images/bgvidddd.mp4'
+import bgVideo from '../../images/vidloop.mp4'
 import FlowerShowcase from './FlowerShowcase'
 import FloatingLogo from './FloatingLogo'
 import SwipeIndicator from './SwipeIndicator'

@@ -11,14 +11,23 @@ type LogoRect = {
 }
 
 type TransitionPhase = 'idle' | 'start' | 'toCenter' | 'orbitCenter' | 'toHeader'
+type Page = 'landing' | 'menu'
+const PAGE_STORAGE_KEY = 'boukeyt-page'
 
 function App() {
-  const [page, setPage] = React.useState<'landing' | 'menu'>('landing')
+  const [page, setPage] = React.useState<Page>(() => {
+    const storedPage = window.localStorage.getItem(PAGE_STORAGE_KEY)
+    return storedPage === 'menu' ? 'menu' : 'landing'
+  })
   const [logoRect, setLogoRect] = React.useState<LogoRect | null>(null)
   const [transitionPhase, setTransitionPhase] = React.useState<TransitionPhase>('idle')
   const orbitTimeoutRef = React.useRef<number | null>(null)
   const toHeaderTimeoutRef = React.useRef<number | null>(null)
   const finishTimeoutRef = React.useRef<number | null>(null)
+
+  React.useEffect(() => {
+    window.localStorage.setItem(PAGE_STORAGE_KEY, page)
+  }, [page])
 
   React.useEffect(() => {
     return () => {
@@ -69,6 +78,12 @@ function App() {
       setTransitionPhase('idle')
       setLogoRect(null)
     }, 2140)
+  }
+
+  const handleHomeClick = () => {
+    setPage('landing')
+    setTransitionPhase('idle')
+    setLogoRect(null)
   }
 
   const menuTarget = transitionPhase === 'toHeader' ? getMenuLogoTarget() : null
@@ -130,7 +145,7 @@ function App() {
         />
       )}
 
-      {page === 'menu' && <MenuPage />}
+      {page === 'menu' && <MenuPage onHomeClick={handleHomeClick} />}
 
       {transitionPhase !== 'idle' && logoRect && (
         <div className="pointer-events-none fixed inset-0 z-[999]">
