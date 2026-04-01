@@ -3,6 +3,7 @@ import MenuHeader from './MenuHeader'
 import MenuDetailsPanel from './MenuDetailsPanel'
 import MenuBouquetPanel from './MenuBouquetPanel'
 import MenuInfoPanel from './MenuInfoPanel'
+import AddToCartPanel from './AddToCartPanel'
 import OrderModal from './OrderModal'
 
 type MenuPageProps = {
@@ -21,6 +22,7 @@ type FlyToCartAnimation = {
 function MenuPage({ onHomeClick }: MenuPageProps) {
     const [isOrderModalOpen, setIsOrderModalOpen] = React.useState(false)
     const [cartNotificationCount, setCartNotificationCount] = React.useState(0)
+    const [showAddToCart, setShowAddToCart] = React.useState(false)
     const [flyToCartAnimation, setFlyToCartAnimation] = React.useState<FlyToCartAnimation | null>(null)
     const [isCartBouncing, setIsCartBouncing] = React.useState(false)
     const animationTimeoutRef = React.useRef<number | null>(null)
@@ -89,12 +91,27 @@ function MenuPage({ onHomeClick }: MenuPageProps) {
         }, 1320)
     }
 
+    const handleHeaderCartClick = () => {
+        setShowAddToCart(true)
+    }
+
+    const handleHomeClick = () => {
+        if (showAddToCart) {
+            setShowAddToCart(false)
+            return
+        }
+
+        onHomeClick()
+    }
+
     return (
-        <main className="min-h-screen bg-[#3B2D2D]">
+        <main className={`${showAddToCart ? 'h-screen overflow-hidden' : 'min-h-screen'} bg-[#3B2D2D]`}>
             <MenuHeader
-                onHomeClick={onHomeClick}
+                onHomeClick={handleHomeClick}
                 cartNotificationCount={cartNotificationCount}
                 isCartBouncing={isCartBouncing}
+                onCartClick={handleHeaderCartClick}
+                homeLabel={showAddToCart ? 'Menu' : 'Home'}
             />
 
             {flyToCartAnimation && (
@@ -120,14 +137,20 @@ function MenuPage({ onHomeClick }: MenuPageProps) {
                 </div>
             )}
 
-            <section className="mx-auto grid min-h-[calc(100vh-88px)] w-full max-w-7xl grid-cols-1 items-center gap-8 px-6 pb-10 pt-2 text-white lg:grid-cols-[1fr_1.35fr_1fr] lg:gap-10">
-                <MenuDetailsPanel />
-                <MenuBouquetPanel />
-                <MenuInfoPanel
-                    onOrderClick={() => setIsOrderModalOpen(true)}
-                    onCartClick={handleMenuCartClick}
-                />
-            </section>
+            {showAddToCart ? (
+                <section className="h-[calc(100vh-88px)] w-full overflow-hidden text-white">
+                    <AddToCartPanel onClose={() => setShowAddToCart(false)} />
+                </section>
+            ) : (
+                <section className="mx-auto grid min-h-[calc(100vh-88px)] w-full max-w-7xl grid-cols-1 items-center gap-8 px-6 pb-10 pt-2 text-white lg:grid-cols-[1fr_1.35fr_1fr] lg:gap-10">
+                    <MenuDetailsPanel />
+                    <MenuBouquetPanel />
+                    <MenuInfoPanel
+                        onOrderClick={() => setIsOrderModalOpen(true)}
+                        onCartClick={handleMenuCartClick}
+                    />
+                </section>
+            )}
             <OrderModal isOpen={isOrderModalOpen} onClose={() => setIsOrderModalOpen(false)} />
         </main>
     )

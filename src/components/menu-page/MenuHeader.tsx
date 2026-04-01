@@ -5,9 +5,17 @@ type MenuHeaderProps = {
     onHomeClick: () => void
     cartNotificationCount: number
     isCartBouncing: boolean
+    onCartClick: () => void
+    homeLabel?: string
 }
 
-function MenuHeader({ onHomeClick, cartNotificationCount, isCartBouncing }: MenuHeaderProps) {
+function MenuHeader({
+    onHomeClick,
+    cartNotificationCount,
+    isCartBouncing,
+    onCartClick,
+    homeLabel = 'Home',
+}: MenuHeaderProps) {
     return (
         <header className="menu-pop-in menu-delay-0 flex items-center justify-between px-6 pb-5 pt-0 sm:px-10">
             <img
@@ -22,9 +30,15 @@ function MenuHeader({ onHomeClick, cartNotificationCount, isCartBouncing }: Menu
                     onClick={onHomeClick}
                     className="transition-opacity hover:opacity-80"
                 >
-                    Home
+                    {homeLabel}
                 </button>
-                <div id="menu-header-cart" className={`relative ${isCartBouncing ? 'menu-cart-bump' : ''}`}>
+                <button
+                    type="button"
+                    onClick={onCartClick}
+                    aria-label="Cart"
+                    id="menu-header-cart"
+                    className={`relative transition-opacity hover:opacity-80 ${isCartBouncing ? 'menu-cart-bump' : ''}`}
+                >
                     <img
                         src={cartImage}
                         alt="Cart"
@@ -35,7 +49,7 @@ function MenuHeader({ onHomeClick, cartNotificationCount, isCartBouncing }: Menu
                             {cartNotificationCount}
                         </span>
                     )}
-                </div>
+                </button>
             </nav>
         </header>
     )

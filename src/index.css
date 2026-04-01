@@ -143,6 +143,27 @@
   animation-delay: 780ms;
 }
 
+@keyframes add-to-cart-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.97);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.01);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.add-to-cart-reveal {
+  animation: add-to-cart-reveal 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
 @keyframes order-modal-pop {
   0% {
     opacity: 0;
