@@ -22,6 +22,7 @@ type FlyToCartAnimation = {
 function MenuPage({ onHomeClick }: MenuPageProps) {
     const [isOrderModalOpen, setIsOrderModalOpen] = React.useState(false)
     const [cartNotificationCount, setCartNotificationCount] = React.useState(0)
+    const [cartFlowers, setCartFlowers] = React.useState<string[]>([])
     const [showAddToCart, setShowAddToCart] = React.useState(false)
     const [flyToCartAnimation, setFlyToCartAnimation] = React.useState<FlyToCartAnimation | null>(null)
     const [isCartBouncing, setIsCartBouncing] = React.useState(false)
@@ -44,10 +45,14 @@ function MenuPage({ onHomeClick }: MenuPageProps) {
     }, [])
 
     const handleMenuCartClick = () => {
-        setCartNotificationCount((prev) => (prev >= 4 ? 1 : prev + 1))
-
         const flowerImage = document.getElementById('menu-active-flower') as HTMLImageElement | null
         const headerCart = document.getElementById('menu-header-cart')
+        const selectedFlowerSrc = flowerImage?.currentSrc || flowerImage?.src
+
+        if (selectedFlowerSrc) {
+            setCartFlowers((prev) => [...prev, selectedFlowerSrc])
+            setCartNotificationCount((prev) => prev + 1)
+        }
 
         if (!flowerImage || !headerCart) {
             return
@@ -95,6 +100,24 @@ function MenuPage({ onHomeClick }: MenuPageProps) {
         setShowAddToCart(true)
     }
 
+    const handleAddToCartOrderClick = () => {
+        setShowAddToCart(false)
+        setIsOrderModalOpen(true)
+    }
+
+    const handleRemoveHighlightedFlower = (index: number) => {
+        setCartFlowers((prev) => {
+            if (prev.length === 0) {
+                return prev
+            }
+
+            const safeIndex = Math.max(0, Math.min(index, prev.length - 1))
+            const nextFlowers = prev.filter((_, flowerIndex) => flowerIndex !== safeIndex)
+            setCartNotificationCount(nextFlowers.length)
+            return nextFlowers
+        })
+    }
+
     const handleHomeClick = () => {
         if (showAddToCart) {
             setShowAddToCart(false)
@@ -139,7 +162,12 @@ function MenuPage({ onHomeClick }: MenuPageProps) {
 
             {showAddToCart ? (
                 <section className="h-[calc(100vh-88px)] w-full overflow-hidden text-white">
-                    <AddToCartPanel onClose={() => setShowAddToCart(false)} />
+                    <AddToCartPanel
+                        onClose={() => setShowAddToCart(false)}
+                        onOrderClick={handleAddToCartOrderClick}
+                        flowerImages={cartFlowers}
+                        onRemoveHighlightedFlower={handleRemoveHighlightedFlower}
+                    />
                 </section>
             ) : (
                 <section className="mx-auto grid min-h-[calc(100vh-88px)] w-full max-w-7xl grid-cols-1 items-center gap-8 px-6 pb-10 pt-2 text-white lg:grid-cols-[1fr_1.35fr_1fr] lg:gap-10">

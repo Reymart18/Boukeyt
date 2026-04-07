@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import mainBouquet from '../../images/flower2.png'
+import mainBouquet from '../../images/flower.png'
 import secondBouquet from '../../images/flowerr.png'
 import messageBox from '../../images/Frame2.png'
 import priceTag from '../../images/pricetag.png'
